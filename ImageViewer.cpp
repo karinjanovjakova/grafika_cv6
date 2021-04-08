@@ -433,10 +433,9 @@ void ImageViewer::on_imp_clicked() {
 		(*Polohrany)[i + 1].setVert(&(*Vrcholy)[druhy], &(*Vrcholy)[prvy]);
 		(*Polohrany)[i + 1].setPair(&(*Polohrany)[i]);
 		(*Polohrany)[i].setPair(&(*Polohrany)[i + 1]);
-		qDebug() << (*Polohrany)[i].getVOIndex() << (*Polohrany)[i].getVEIndex();
-		qDebug() << (*Polohrany)[i + 1].getVOIndex() << (*Polohrany)[i + 1].getVEIndex();
+		qDebug() << "Hrana s indexom" << i <<":"<< (*Polohrany)[i].getVOIndex() << (*Polohrany)[i].getVEIndex();
+		qDebug() << "Hrana s indexom" << i+1 <<":"<< (*Polohrany)[i + 1].getVOIndex() << (*Polohrany)[i + 1].getVEIndex();
 	}
-	int n = 0, p = 0;
 	line = file.readLine();
 	if (line.split(" ").at(0) != "POLYGONS")
 		return;
@@ -454,75 +453,54 @@ void ImageViewer::on_imp_clicked() {
 		a = line.split(" ").at(1).toInt();
 		b = line.split(" ").at(2).toInt();
 		c = line.split(" ").at(3).toInt();
+		qDebug() << "hladam " << a << b << c;
 		VrcholyStien.append(a);
 		VrcholyStien.append(b);
 		VrcholyStien.append(c);
-		qDebug() << i << a << b << c;
+	int n = -1, p = -1;
 		for (j = 0; j < polohranySize * 2; j++) {
 			if (((*Polohrany)[j].getVOIndex() == a && (*Polohrany)[j].getVEIndex() == b)) {
 				g++;
-				qDebug() << i;
 				(*Polohrany)[j].setFace(&(*Steny)[i]);
 				for (k = 0; k < polohranySize * 2; k++) {
-					if ((*Polohrany)[k].getVOIndex() == c && (*Polohrany)[k].getVEIndex()==a) {
+					if ((*Polohrany)[k].getVOIndex() == c && (*Polohrany)[k].getVEIndex() == a) {
 						(*Polohrany)[j].setEdgePrev(&(*Polohrany)[k]);
 						(*Polohrany)[k].setEdgeNext(&(*Polohrany)[j]);
 						(*Polohrany)[k].setFace(&(*Steny)[i]);
-						qDebug() << "v cykle " << i << "som nasiel prvu prev";
+						(*Steny)[i].setEdge(&(*Polohrany)[j]);
+						qDebug() << "v stene su vrcholy" << (*Polohrany)[j].getVOIndex() << (*Polohrany)[k].getVOIndex();
 						n = k;
-					
+						if (p >= 0) {
+							qDebug() << "indexy hran su: " << p << n << j;
+							(*Polohrany)[n].setEdgePrev(&(*Polohrany)[p]);
+							(*Polohrany)[p].setEdgeNext(&(*Polohrany)[n]);
+						}
 					}
 					else if ((*Polohrany)[k].getVOIndex() == b && (*Polohrany)[k].getVEIndex() == c) {
 						(*Polohrany)[j].setEdgeNext(&(*Polohrany)[k]);
 						(*Polohrany)[k].setEdgePrev(&(*Polohrany)[j]);
 						(*Polohrany)[k].setFace(&(*Steny)[i]);
-						qDebug() << "v cykle " << i << "som nasiel prvu next";
+						qDebug() << "v stene je vrchol" << (*Polohrany)[k].getVOIndex();
 						p = k;
+						if (n >= 0) {
+							qDebug() << "indexy hran su: " << p << n << j;
+							(*Polohrany)[n].setEdgePrev(&(*Polohrany)[p]);
+							(*Polohrany)[p].setEdgeNext(&(*Polohrany)[n]);
+						}
 					}
 				}
 			}
-			else if ((*Polohrany)[j].getVOIndex() == b && (*Polohrany)[j].getVEIndex() == a) {
-				g++;
-				(*Polohrany)[j].setFace(&(*Steny)[i]);
-				qDebug() << i;
-				for (k = 0; k < polohranySize * 2; k++) {
-					if ((*Polohrany)[k].getVOIndex() == a && (*Polohrany)[k].getVEIndex() == c) {
-						(*Polohrany)[j].setEdgeNext(&(*Polohrany)[k]);
-						(*Polohrany)[k].setEdgePrev(&(*Polohrany)[j]);
-						(*Polohrany)[k].setFace(&(*Steny)[i]);
-						qDebug() << "v cykle " << i << "som nasiel druhu next";
-						p = k;
-					}
-					else if ((*Polohrany)[k].getVOIndex() == c && (*Polohrany)[k].getVEIndex() == b) {
-						(*Polohrany)[j].setEdgePrev(&(*Polohrany)[k]);
-						(*Polohrany)[k].setEdgeNext(&(*Polohrany)[j]);
-						(*Polohrany)[k].setFace(&(*Steny)[i]);
-						qDebug() << "v cykle " << i << "som nasiel druhu prev";
-						n = k;
-					}
-				}
-			}
-			(*Polohrany)[n].setEdgePrev(&(*Polohrany)[p]);
-			(*Polohrany)[p].setEdgeNext(&(*Polohrany)[n]);
 		}
 	}
 	int a, b, c;
-	for (i = 0; i < stenySize; i++) {
-		a = VrcholyStien[i * 3];
-		b = VrcholyStien[i * 3 + 1];
-		c = VrcholyStien[i * 3 + 2];
-		for (j = 0; j < polohranySize; j++) {
-			if ((*Polohrany)[j].getVOIndex() == a && (*Polohrany)[j].getHrana_next()->getVOIndex() == b && (*Polohrany)[j].getHrana_prev()->getVOIndex() == c)
-				(*Steny)[i].setEdge(&(*Polohrany)[j]);
-			else if ((*Polohrany)[j].getVOIndex() == a && (*Polohrany)[j].getHrana_prev()->getVOIndex() == b && (*Polohrany)[j].getHrana_next()->getVOIndex() == c)
-				(*Steny)[i].setEdge(&(*Polohrany)[j]);
-		}
-	}
-	//kontrolne vypisy
+
+	
+	/*//kontrolne vypisy
 	for (i = 0; i < polohranySize*2; i++)
-		qDebug() << (*Polohrany)[i].getHrana_prev()->getVOIndex() << (*Polohrany)[i].getHrana_next()->getVOIndex();
+		qDebug() <<  (*Polohrany)[i].getVOIndex() << (*Polohrany)[i].getHrana_next()->getVOIndex() << (*Polohrany)[i].getHrana_prev()->getVOIndex();
+
 	for (i = 0; i < stenySize; i++)
-		qDebug() << (*Steny)[i].getEdge();
+		qDebug() << (*Steny)[i].getEdge();*/
 
 	file.close();
 	//zapis do octa
