@@ -344,7 +344,185 @@ void ImageViewer::on_generuj_clicked() {
 
 }
 
-void ImageViewer::on_rozdel_clicked() {}
+void ImageViewer::on_rozdel_clicked() {
+	QList<Vertex>* Vrcholy = octa.getVrcholy();
+	QList<H_Edge>* Polohrany = octa.getHrany();
+	QList<Face>* Steny = octa.getSteny();
+	double x0 ,x1, x, y0, y1, y, z0, z1, z, d;
+	int i, j, stenySize= octa.getStenysize(), polohranySize = octa.getHranysize();
+	H_Edge* actualEdge;
+	for (i = 0; i < stenySize; i++) {
+		actualEdge = (*Steny)[i].getEdge();
+		int indexOriginVertex0 = actualEdge->getVOIndex();
+		int indexOriginVertex1 = actualEdge->getHrana_next()->getVOIndex();
+		int indexOriginVertex2 = actualEdge->getHrana_prev()->getVOIndex();
+
+		x0 = (*Vrcholy)[indexOriginVertex0].getX();			//prvy bod
+		x1 = (*Vrcholy)[indexOriginVertex1].getX();
+		x = (x0 + x1) / 2.0;
+		y0 = (*Vrcholy)[indexOriginVertex0].getY();
+		y1 = (*Vrcholy)[indexOriginVertex1].getY();
+		y = (y0 + y1) / 2.0;
+		z0 = (*Vrcholy)[indexOriginVertex0].getZ();
+		z1 = (*Vrcholy)[indexOriginVertex1].getZ();
+		z = (z0 + z1) / 2.0;
+		/*d = sqrt(x * x + y * y + z * z); //projekcia na jednotkovu kruznicu 
+		x = x / d;
+		y = y / d;
+		z = z / d;*/
+
+		Vertex* A;
+		A = new Vertex();
+		int indexA = -1;
+		(*A).setSur(x, y, z);
+		for (j = 0; j < octa.getVrcholysize(); j++) {
+			if ((*Vrcholy)[j].getX() == (*A).getX() && (*Vrcholy)[j].getY() == (*A).getY() && (*Vrcholy)[j].getZ() == (*A).getZ()) {
+				indexA = j;
+				(*A).setIndex(j);
+			}
+		}
+		if (indexA == -1) {
+			(*A).setIndex(octa.getVrcholysize());
+			Vrcholy->append(*A);
+		}
+
+
+		x0 = (*Vrcholy)[indexOriginVertex0].getX();			//druhy bod
+		x1 = (*Vrcholy)[indexOriginVertex2].getX();
+		x = (x0 + x1) / 2.0;
+		y0 = (*Vrcholy)[indexOriginVertex0].getY();
+		y1 = (*Vrcholy)[indexOriginVertex2].getY();
+		y = (y0 + y1) / 2.0;
+		z0 = (*Vrcholy)[indexOriginVertex0].getZ();
+		z1 = (*Vrcholy)[indexOriginVertex2].getZ();
+		z = (z0 + z1) / 2.0;
+		/*d = sqrt(x * x + y * y + z * z); //projekcia na jednotkovu kruznicu 
+		x = x / d;
+		y = y / d;
+		z = z / d;*/
+
+		Vertex* B;
+		B = new Vertex();
+		int indexB = -1;
+		(*B).setSur(x, y, z);
+		for (j = 0; j < octa.getVrcholysize(); j++) {
+			if ((*Vrcholy)[j].getX() == (*B).getX() && (*Vrcholy)[j].getY() == (*B).getY() && (*Vrcholy)[j].getZ() == (*B).getZ()) {
+				indexB = j;
+				(*B).setIndex(j);
+			}
+		}
+		if (indexB == -1) {
+			(*B).setIndex(octa.getVrcholysize());
+			Vrcholy->append(*B);
+		}
+
+
+		x0 = (*Vrcholy)[indexOriginVertex1].getX();			//treti bod
+		x1 = (*Vrcholy)[indexOriginVertex2].getX();
+		x = (x0 + x1) / 2.0;
+		y0 = (*Vrcholy)[indexOriginVertex1].getY();
+		y1 = (*Vrcholy)[indexOriginVertex2].getY();
+		y = (y0 + y1) / 2.0;
+		z0 = (*Vrcholy)[indexOriginVertex1].getZ();
+		z1 = (*Vrcholy)[indexOriginVertex2].getZ();
+		z = (z0 + z1) / 2.0;
+		/*d = sqrt(x * x + y * y + z * z); //projekcia na jednotkovu kruznicu 
+		x = x / d;
+		y = y / d;
+		z = z / d;*/
+
+		Vertex* C;
+		C = new Vertex();
+		int indexC = -1;
+		(*C).setSur(x, y, z);
+		for (j = 0; j < octa.getVrcholysize(); j++) {
+			if ((*Vrcholy)[j].getX() == (*C).getX() && (*Vrcholy)[j].getY() == (*C).getY() && (*Vrcholy)[j].getZ() == (*C).getZ()) {
+				indexC = j;
+				(*C).setIndex(j);
+			}
+		}
+		if (indexC == -1) {
+			(*C).setIndex(octa.getVrcholysize());
+			Vrcholy->append(*C);
+		}
+
+		Face* f0 = new Face();
+		Face* f1 = new Face();
+		Face* f2 = new Face();
+		Face* f3 = new Face();
+
+		H_Edge* e0 = new H_Edge();
+		H_Edge* e1 = new H_Edge();
+		H_Edge* e2 = new H_Edge();
+		H_Edge* e3 = new H_Edge();
+		H_Edge* e4 = new H_Edge();
+		H_Edge* e5 = new H_Edge();
+		H_Edge* e6 = new H_Edge();
+		H_Edge* e7 = new H_Edge();
+		H_Edge* e8 = new H_Edge();
+		H_Edge* e9 = new H_Edge();
+		H_Edge* e10 = new H_Edge();
+		H_Edge* e11 = new H_Edge();
+
+		(*e0).set(&(*Vrcholy)[indexOriginVertex0], f0, e2, e1, NULL);
+		(*Polohrany).append(*e0);
+		(*e1).set(&(*A), f0, e0, e2, e9);
+		(*Polohrany).append(*e1);
+		(*e2).set(&(*B), f0, e1, e0, NULL);
+		(*Polohrany).append(*e2);
+		(*e3).set(&(*A), f1, e5, e4, NULL);
+		(*Polohrany).append(*e3);
+		(*e4).set(&(*Vrcholy)[indexOriginVertex1], f1, e3, e5, NULL);
+		(*Polohrany).append(*e4);
+		(*e5).set(&(*C), f1, e4, e3, e10);
+		(*Polohrany).append(*e5);
+		(*e6).set(&(*B), f2, e8, e7, e11);
+		(*Polohrany).append(*e6);
+		(*e7).set(&(*C), f2, e6, e8, NULL);
+		(*Polohrany).append(*e7);
+		(*e8).set(&(*Vrcholy)[indexOriginVertex2], f2, e7, e6, NULL);
+		(*Polohrany).append(*e8);
+		(*e9).set(&(*B), f3, e11, e10, e1);
+		(*Polohrany).append(*e9);
+		(*e10).set(&(*A), f3, e9, e11, e5);
+		(*Polohrany).append(*e10);
+		(*e11).set(&(*C), f3, e10, e9, e6);
+		(*Polohrany).append(*e11);
+
+		(*f0).setEdge(&(*e0));
+		(*Steny).append(*f0);
+		(*f1).setEdge(&(*e3));
+		(*Steny).append(*f1);
+		(*f2).setEdge(&(*e6));
+		(*Steny).append(*f2);
+		(*f3).setEdge(&(*e9));
+		(*Steny).append(*f3);
+	}
+	//projekcia na jednotkovu kruznicu
+	for (i = 0; i < octa.getVrcholysize(); i++) {
+		x = (*Vrcholy)[i].getX();
+		y = (*Vrcholy)[i].getY();
+		z = (*Vrcholy)[i].getZ();
+		d = sqrt(x * x + y * y + z * z);
+		if ((1.0 - d) != 0) {
+			(*Vrcholy)[i].setX(x / d);
+			(*Vrcholy)[i].setY(y / d);
+			(*Vrcholy)[i].setZ(z / d);
+		}
+	}
+
+	for (i = 0; i < polohranySize; i++) {
+		(*Polohrany).removeFirst();
+	}
+	for (i = 0; i < stenySize; i++) {
+		(*Steny).removeFirst();
+	}
+	octa.setVrcholy(Vrcholy);
+	octa.setHrany(Polohrany);
+	octa.setSteny(Steny);
+	octa.setParove();
+	qDebug() << "delenie OK";
+}
 
 void ImageViewer::on_imp_clicked() {
 
@@ -365,7 +543,6 @@ void ImageViewer::on_imp_clicked() {
 	//kontrola uvodnych riadkov
 	QString line;
 	line = file.readLine();
-	qDebug() << line;
 	if (line != "# vtk DataFile Version 3.0\r\n") {
 		msgBox.setText(u8"Hlavièka súboru nie je správna.");
 		msgBox.setIcon(QMessageBox::Warning);
@@ -373,7 +550,6 @@ void ImageViewer::on_imp_clicked() {
 		return;
 	}
 	line = file.readLine();
-	qDebug() << line;
 	if (line != "vtk output\r\n") {
 		msgBox.setText(u8"Hlavièka súboru nie je správna.");
 		msgBox.setIcon(QMessageBox::Warning);
@@ -381,7 +557,6 @@ void ImageViewer::on_imp_clicked() {
 		return;
 	}
 	line = file.readLine();
-	qDebug() << line;
 	if (line != "ASCII\r\n") {
 		msgBox.setText(u8"Hlavièka súboru nie je správna.");
 		msgBox.setIcon(QMessageBox::Warning);
@@ -389,7 +564,6 @@ void ImageViewer::on_imp_clicked() {
 		return;
 	}
 	line = file.readLine();
-	qDebug() << line;
 	if (line != "DATASET POLYDATA\r\n") {
 		msgBox.setText(u8"Hlavièka súboru nie je správna.");
 		msgBox.setIcon(QMessageBox::Warning);
@@ -433,9 +607,7 @@ void ImageViewer::on_imp_clicked() {
 		(*Polohrany)[i + 1].setVert(&(*Vrcholy)[druhy], &(*Vrcholy)[prvy]);
 		(*Polohrany)[i + 1].setPair(&(*Polohrany)[i]);
 		(*Polohrany)[i].setPair(&(*Polohrany)[i + 1]);
-		qDebug() << "Hrana s indexom" << i <<":"<< (*Polohrany)[i].getVOIndex() << (*Polohrany)[i].getVEIndex();
-		qDebug() << "Hrana s indexom" << i+1 <<":"<< (*Polohrany)[i + 1].getVOIndex() << (*Polohrany)[i + 1].getVEIndex();
-	}
+		}
 	line = file.readLine();
 	if (line.split(" ").at(0) != "POLYGONS")
 		return;
@@ -453,7 +625,6 @@ void ImageViewer::on_imp_clicked() {
 		a = line.split(" ").at(1).toInt();
 		b = line.split(" ").at(2).toInt();
 		c = line.split(" ").at(3).toInt();
-		qDebug() << "hladam " << a << b << c;
 		VrcholyStien.append(a);
 		VrcholyStien.append(b);
 		VrcholyStien.append(c);
@@ -468,10 +639,8 @@ void ImageViewer::on_imp_clicked() {
 						(*Polohrany)[k].setEdgeNext(&(*Polohrany)[j]);
 						(*Polohrany)[k].setFace(&(*Steny)[i]);
 						(*Steny)[i].setEdge(&(*Polohrany)[j]);
-						qDebug() << "v stene su vrcholy" << (*Polohrany)[j].getVOIndex() << (*Polohrany)[k].getVOIndex();
 						n = k;
 						if (p >= 0) {
-							qDebug() << "indexy hran su: " << p << n << j;
 							(*Polohrany)[n].setEdgePrev(&(*Polohrany)[p]);
 							(*Polohrany)[p].setEdgeNext(&(*Polohrany)[n]);
 						}
@@ -480,10 +649,8 @@ void ImageViewer::on_imp_clicked() {
 						(*Polohrany)[j].setEdgeNext(&(*Polohrany)[k]);
 						(*Polohrany)[k].setEdgePrev(&(*Polohrany)[j]);
 						(*Polohrany)[k].setFace(&(*Steny)[i]);
-						qDebug() << "v stene je vrchol" << (*Polohrany)[k].getVOIndex();
 						p = k;
 						if (n >= 0) {
-							qDebug() << "indexy hran su: " << p << n << j;
 							(*Polohrany)[n].setEdgePrev(&(*Polohrany)[p]);
 							(*Polohrany)[p].setEdgeNext(&(*Polohrany)[n]);
 						}

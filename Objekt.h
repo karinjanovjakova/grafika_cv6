@@ -14,7 +14,8 @@ public:
 
 	void set(int i, double surX, double surY, double surZ) { index = i; x = surX; y = surY; z = surZ; };
 	void setEdge(H_Edge* E) { edge = E; };
-	void setSur(int i, double surX, double surY, double surZ) { index = i; x = surX; y = surY; z = surZ; };
+	void setSur(double surX, double surY, double surZ) {  x = surX; y = surY; z = surZ; };
+	void setIndex(int i) { index = i; };
 	void setX(double surX) { x = surX; };
 	void setY(double surY) { y = surY; };
 	void setZ(double surZ) { z = surZ; };
@@ -80,7 +81,20 @@ public:
 	void setVrcholy(QList<Vertex>* vrcholy) { Vrcholy = vrcholy; };
 	void setHrany(QList<H_Edge>* hrany) { Hrany = hrany; };
 	void setSteny(QList<Face>* steny) { Steny = steny; };
-	void setParove() {};
+	QList<Vertex>* getVrcholy() { return Vrcholy; };
+	QList<H_Edge>* getHrany() { return Hrany; };
+	QList<Face>* getSteny() { return Steny; };
+	void setParove() {
+		int i, j;
+		for (i = 0; i < getHranysize(); i++) {
+			for (j = 0; j < getHranysize(); j++) {
+				if ((*Hrany)[i].getVOIndex() == (*Hrany)[j].getHrana_next()->getVOIndex() && (*Hrany)[i].getHrana_next()->getVOIndex() == (*Hrany)[j].getVOIndex()){
+					(*Hrany)[i].setPair(&(*Hrany)[j]);
+					(*Hrany)[j].setPair(&(*Hrany)[i]);
+				}
+			}
+		}
+	};
 	int getVrcholysize() { return Vrcholy->size(); };
 	int getHranysize() { return Hrany->size(); };
 	int getStenysize() { return Steny->size(); };
